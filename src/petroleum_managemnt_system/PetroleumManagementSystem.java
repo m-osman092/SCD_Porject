@@ -50,8 +50,6 @@ public class PetroleumManagementSystem {
     }
 
     private void handleAdminMenu() {
-        menuManager.showAdminDashboard(inventory, recordManager);
-        
         menuManager.showAdminMenu();
         int choice = inputValidator.getValidIntInput("Choose option: ", 1, 7);
         
