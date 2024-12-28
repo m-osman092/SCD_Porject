@@ -3,6 +3,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
+import java.util.HashMap;
 
 public class RecordManager {
     private static RecordManager instance;
@@ -10,12 +12,20 @@ public class RecordManager {
     private MenuManager menuManager;
     private InputValidator inputValidator;
     private Inventory inventory;
+    private Map<String, Double> lastPetrolReadings;
+    private Map<String, Double> lastDieselReadings;
     
     private RecordManager() {
         records = new ArrayList<>();
         menuManager = MenuManager.getInstance();
         inputValidator = InputValidator.getInstance();
         inventory = Inventory.getInstance();
+        lastPetrolReadings = new HashMap<>();
+        lastDieselReadings = new HashMap<>();
+        for (int i = 1; i <= 4; i++) {
+            lastPetrolReadings.put("P" + i, 0.0);
+            lastDieselReadings.put("D" + i, 0.0);
+        }
     }
     
     public static RecordManager getInstance() {
@@ -46,7 +56,13 @@ public class RecordManager {
             System.out.println("\nPetrol Nozzle Readings:");
             for (NozzleReading nozzle : record.getPetrolNozzles()) {
                 System.out.println("\nNozzle " + nozzle.getNozzleId() + ":");
-                double initial = inputValidator.getValidDoubleInput("Enter Initial Reading: ");
+                double initial;
+                if (records.isEmpty() || lastPetrolReadings.get(nozzle.getNozzleId()) == 0.0) {
+                    initial = inputValidator.getValidDoubleInput("Enter Initial Reading: ");
+                } else {
+                    initial = lastPetrolReadings.get(nozzle.getNozzleId());
+                    System.out.println("Initial Reading (from last entry): " + initial);
+                }
                 double final_ = inputValidator.getValidDoubleInput("Enter Final Reading: ");
                 
                 if (final_ < initial) {
@@ -55,13 +71,20 @@ public class RecordManager {
                 
                 nozzle.setInitialReading(initial);
                 nozzle.setFinalReading(final_);
+                lastPetrolReadings.put(nozzle.getNozzleId(), final_);
             }
             
             // Get readings for diesel nozzles
             System.out.println("\nDiesel Nozzle Readings:");
             for (NozzleReading nozzle : record.getDieselNozzles()) {
                 System.out.println("\nNozzle " + nozzle.getNozzleId() + ":");
-                double initial = inputValidator.getValidDoubleInput("Enter Initial Reading: ");
+                double initial;
+                if (records.isEmpty() || lastDieselReadings.get(nozzle.getNozzleId()) == 0.0) {
+                    initial = inputValidator.getValidDoubleInput("Enter Initial Reading: ");
+                } else {
+                    initial = lastDieselReadings.get(nozzle.getNozzleId());
+                    System.out.println("Initial Reading (from last entry): " + initial);
+                }
                 double final_ = inputValidator.getValidDoubleInput("Enter Final Reading: ");
                 
                 if (final_ < initial) {
@@ -70,6 +93,7 @@ public class RecordManager {
                 
                 nozzle.setInitialReading(initial);
                 nozzle.setFinalReading(final_);
+                lastDieselReadings.put(nozzle.getNozzleId(), final_);
             }
             
             // Calculate totals
@@ -188,7 +212,7 @@ public class RecordManager {
         
         System.out.println("\n┌────────────────────────────────────────────┐");
         System.out.println("│              Sales Summary                 │");
-        System.out.println("├────────────────────────────────────────────┤");
+        System.out.println("├─────────────────────────────────���──────────┤");
         System.out.println("│ Petrol Sales:                             │");
         System.out.printf("│   Total Liters: %-8.2f                   │\n", totalPetrolLiters);
         System.out.printf("│   Total Amount: PKR %-8.2f              │\n", totalPetrolAmount);
@@ -200,6 +224,6 @@ public class RecordManager {
         System.out.println("│ Overall Total:                            │");
         System.out.printf("│   Total Liters: %-8.2f                   │\n", totalLiters);
         System.out.printf("│   Total Amount: PKR %-8.2f              │\n", totalAmount);
-        System.out.println("└────────────────────────────────────────────┘");
+        System.out.println("└────────────────────────────────��───────────┘");
     }
 } 
