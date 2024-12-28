@@ -138,6 +138,6 @@ PetroleumSystemException
 ## Project Team
 
 **Members:**
-- **M Siam FL-21245** (Group Leader)
+- **M Siam FL-21245**
 - **M Usman FL-23850**
-
+- **Nazeer Ahmed ISE-9244394**
